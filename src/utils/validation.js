@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { z } from 'zod';
-
 // რეგისტრაციის სქემა
 export const registerSchema = z.object({
   fullName: z.string().min(2, { message: "სახელი უნდა შედგებოდეს მინიმუმ 2 სიმბოლოსგან" }),

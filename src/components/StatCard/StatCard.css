@@ -1,0 +1,27 @@
+.stat-card {
+  background-color: var(--bg-surface);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.stat-title {
+  font-size: 0.875rem;
+  color: #93c5fd;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stat-change {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+}
