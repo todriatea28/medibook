@@ -2,109 +2,123 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Home() {
+  const specialties = [
+    { 
+      title: "კარდიოლოგია", 
+      desc: "გულ-სისხლძარღვთა სისტემის სრული დიაგნოსტიკა და მკურნალობა.",
+      img: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80"
+    },
+    { 
+      title: "ნევროლოგია", 
+      desc: "ნერვული სისტემის და თავის ტკივილების თანამედროვე თერაპია.",
+      img: "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80"
+    },
+    { 
+      title: "პედიატრია", 
+      desc: "პატარების ჯანმრთელობაზე ზრუნვა დაბადებიდანვე.",
+      img: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80"
+    },
+    { 
+      title: "თერაპია", 
+      desc: "ზოგადი ჯანმრთელობის მონიტორინგი და პრევენცია.",
+      img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80"
+    }
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen text-white bg-slate-950">
-      
-      {/* ზედა ნავიგაცია (<header>) */}
-      <header className="sticky top-0 z-50 border-b border-blue-500/20 bg-slate-900/50 backdrop-blur-md">
-        <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
-          <h1 className="text-2xl font-extrabold text-transparent bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text">
+    <div className="min-h-screen pb-16 bg-slate-50 text-slate-800">
+      {/* სრულყოფილი ზედა ნავიგაცია (Header) */}
+      <header className="sticky top-0 z-30 bg-white border-b shadow-sm border-slate-200">
+        <div className="flex items-center justify-between px-4 py-4 mx-auto max-w-7xl sm:px-6">
+          <Link to="/" className="text-2xl font-black tracking-tight text-teal-600">
             MediBook
-          </h1>
-          <nav aria-label="მთავარი ნავიგაცია">
-            <ul className="flex items-center space-x-6 text-sm font-medium text-blue-200">
-              <li><Link to="/" className="font-semibold text-sky-400">მთავარი</Link></li>
-              <li><Link to="/schedule" className="transition hover:text-sky-400">განრიგი</Link></li>
-              <li><Link to="/login" className="px-4 py-2 text-white transition border bg-blue-600/20 border-blue-500/30 rounded-xl hover:bg-blue-600/30">შესვლა</Link></li>
-              <li><Link to="/register" className="px-4 py-2 font-semibold text-white transition shadow-lg bg-gradient-to-r from-sky-500 to-blue-600 rounded-xl hover:from-sky-400 hover:to-blue-500 shadow-sky-500/20">რეგისტრაცია</Link></li>
-            </ul>
+          </Link>
+          <nav className="flex items-center gap-4 text-sm font-semibold sm:gap-6 text-slate-600">
+            <Link to="/" className="text-teal-600 transition hover:text-teal-700">მთავარი</Link>
+            <Link to="/schedule" className="transition hover:text-teal-600">განრიგი</Link>
+            <Link to="/admin" className="hidden transition sm:inline hover:text-teal-600">პანელი</Link>
+            <Link to="/register" className="transition hover:text-teal-600">რეგისტრაცია</Link>
+            <Link to="/login" className="px-4 py-2 text-white transition bg-teal-600 shadow-sm rounded-xl hover:bg-teal-500">
+              შესვლა
+            </Link>
           </nav>
         </div>
       </header>
 
-      {/* ძირითადი კონტენტი (<main>) */}
-      <main className="flex-1 w-full px-6 py-12 mx-auto space-y-12 max-w-7xl">
-        
-        {/* ჰიერო სექცია */}
-        <section className="p-8 py-12 text-center border shadow-2xl bg-gradient-to-b from-blue-950/40 to-transparent rounded-3xl border-blue-500/10">
-          <h2 className="text-4xl font-extrabold tracking-tight text-white md:text-5xl">
-            იპოვე შენი ექიმი და <span className="text-transparent bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text">დაჯავშნე ვიზიტი</span>
-          </h2>
-          <p className="max-w-2xl mx-auto mt-4 text-base text-blue-300 md:text-lg">
-            თანამედროვე სამედიცინო პლატფორმა, რომელიც ამარტივებს კლინიკასთან კომუნიკაციას და ვიზიტების მართვას.
-          </p>
-          <div className="flex justify-center gap-4 mt-8">
-            <Link to="/schedule" className="px-6 py-3 font-semibold text-white transition shadow-lg bg-gradient-to-r from-sky-500 to-blue-600 rounded-xl shadow-sky-500/20 hover:from-sky-400 hover:to-blue-500">
-              ვიზიტის დაჯავშნა
-            </Link>
-            <Link to="/login" className="px-6 py-3 font-semibold text-blue-200 transition border bg-slate-900 border-blue-500/30 rounded-xl hover:bg-slate-800">
-              პანელში შესვლა
-            </Link>
-          </div>
-        </section>
-
-        {/* პოპულარული სპეციალისტები */}
-        <section className="space-y-6">
-          <h3 className="text-2xl font-bold text-blue-100">პოპულარული სპეციალისტები</h3>
-          
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <main className="px-4 pt-8 mx-auto space-y-10 max-w-7xl sm:px-6">
+        {/* Hero Section */}
+        <section className="relative flex flex-col items-center justify-between gap-8 p-8 overflow-hidden bg-white border shadow-xl rounded-3xl border-slate-200 md:flex-row md:p-12">
+          <div className="z-10 max-w-xl space-y-6">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200/60 shadow-sm">
+              <span className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span>
+              ინოვაციური სამედიცინო პლატფორმა
+            </span>
+            <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl text-slate-900">
+              იპოვე შენი ექიმი და <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600">დაჯავშნე ვიზიტი</span>
+            </h1>
+            <p className="text-sm leading-relaxed text-slate-600 md:text-base">
+              თანამედროვე სამედიცინო პლატფორმა, რომელიც ამარტივებს კლინიკასთან კომუნიკაციას, ექიმის არჩევასა და ვიზიტების სწრაფ მართვას.
+            </p>
             
-            <article className="p-6 space-y-4 border shadow-xl bg-slate-900 rounded-2xl border-blue-500/20">
-              <div className="h-48 overflow-hidden border bg-slate-800 rounded-xl border-blue-500/10">
-                <img 
-                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400" 
-                  alt="დრ. ნინო ბერიძე" 
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <h4 className="text-lg font-bold text-white">დრ. ნინო ბერიძე</h4>
-              <p className="text-sm text-sky-400">კარდიოლოგი</p>
-              <p className="text-xs leading-relaxed text-blue-300">
-                15 წლიანი გამოცდილება გულ-სისხლძარღვთა დაავადებების მკურნალობაში.
-              </p>
-            </article>
+            {/* ღილაკები */}
+            <div className="flex flex-col items-center gap-4 pt-3 sm:flex-row">
+              <Link 
+                to="/schedule" 
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-teal-500/25 transition-all duration-200"
+              >
+                <span>ვიზიტის დაჯავშნა</span>
+              </Link>
+              
+              <Link 
+                to="/login" 
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm border border-slate-300 transition-all duration-200"
+              >
+                <span>პანელში შესვლა</span>
+              </Link>
+            </div>
+          </div>
 
-            <article className="p-6 space-y-4 border shadow-xl bg-slate-900 rounded-2xl border-blue-500/20">
-              <div className="h-48 overflow-hidden border bg-slate-800 rounded-xl border-blue-500/10">
-                <img 
-                  src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400" 
-                  alt="დრ. დავით ლომიძე" 
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <h4 className="text-lg font-bold text-white">დრ. დავით ლომიძე</h4>
-              <p className="text-sm text-sky-400">ნევროლოგი</p>
-              <p className="text-xs leading-relaxed text-blue-300">
-                თანამედროვე მიდგომები ნევროლოგიური პათოლოგიების დიაგნოსტიკასა და რეაბილიტაციაში.
-              </p>
-            </article>
-
-            <article className="p-6 space-y-4 border shadow-xl bg-slate-900 rounded-2xl border-blue-500/20">
-              <div className="h-48 overflow-hidden border bg-slate-800 rounded-xl border-blue-500/10">
-                <img 
-                  src="https://images.unsplash.com/photo-1594824813568-a461327173e9?auto=format&fit=crop&q=80&w=400" 
-                  alt="დრ. მაია ქავთარაძე" 
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <h4 className="text-lg font-bold text-white">დრ. მაია ქავთარაძე</h4>
-              <p className="text-sm text-sky-400">პედიატრი</p>
-              <p className="text-xs leading-relaxed text-blue-300">
-                ზოგადი პედიატრია და ბავშვთა ინფექციური დაავადებების მართვა.
-              </p>
-            </article>
-
+          {/* Banner Image */}
+          <div className="w-full h-64 overflow-hidden border shadow-lg md:w-1/2 md:h-80 rounded-2xl border-slate-200">
+            <img 
+              src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1000&q=80" 
+              alt="Medical Team" 
+              className="object-cover object-center w-full h-full"
+            />
           </div>
         </section>
 
+        {/* Specialties Grid */}
+        <section className="pt-4 space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">პოპულარული სპეციალობები</h2>
+            <p className="text-sm text-slate-500">აირჩიეთ სასურველი მიმართულება</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {specialties.map((item, idx) => (
+              <div 
+                key={idx} 
+                className="flex flex-col overflow-hidden transition-all duration-300 bg-white border shadow-sm rounded-2xl border-slate-200 hover:shadow-xl group hover:-translate-y-1"
+              >
+                <div className="relative overflow-hidden h-44">
+                  <img 
+                    src={item.img} 
+                    alt={item.title} 
+                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="flex flex-col justify-between flex-1 p-5">
+                  <div>
+                    <h3 className="mb-1 text-lg font-bold text-slate-900">{item.title}</h3>
+                    <p className="text-xs leading-relaxed text-slate-600">{item.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
-
-      {/* ფუტერი (<footer>) */}
-      <footer className="px-6 py-8 mt-auto space-y-2 text-xs text-center text-blue-400 border-t border-blue-500/20 bg-slate-900/40">
-        <p>&copy; 2026 MediBook. ყველა უფლება დაცულია.</p>
-        <p>კონტაქტი: support@medibook.ge | ტლფ: +995 (32) 200 00 00</p>
-      </footer>
-
     </div>
   );
-}  
+}
