@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar'; // 👈 დააიმპორტე Navbar
 
 export default function Home() {
   const specialties = [
@@ -27,23 +28,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen pb-16 bg-slate-50 text-slate-800">
-      {/* სრულყოფილი ზედა ნავიგაცია (Header) */}
-      <header className="sticky top-0 z-30 bg-white border-b shadow-sm border-slate-200">
-        <div className="flex items-center justify-between px-4 py-4 mx-auto max-w-7xl sm:px-6">
-          <Link to="/" className="text-2xl font-black tracking-tight text-teal-600">
-            MediBook
-          </Link>
-          <nav className="flex items-center gap-4 text-sm font-semibold sm:gap-6 text-slate-600">
-            <Link to="/" className="text-teal-600 transition hover:text-teal-700">მთავარი</Link>
-            <Link to="/schedule" className="transition hover:text-teal-600">განრიგი</Link>
-            <Link to="/admin" className="hidden transition sm:inline hover:text-teal-600">პანელი</Link>
-            <Link to="/register" className="transition hover:text-teal-600">რეგისტრაცია</Link>
-            <Link to="/login" className="px-4 py-2 text-white transition bg-teal-600 shadow-sm rounded-xl hover:bg-teal-500">
-              შესვლა
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* საერთო ნავიგაცია ჰამბურგერ მენიუთი */}
+      <Navbar />
 
       <main className="px-4 pt-8 mx-auto space-y-10 max-w-7xl sm:px-6">
         {/* Hero Section */}

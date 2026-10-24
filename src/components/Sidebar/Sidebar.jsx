@@ -1,5 +1,12 @@
-import React from 'react';
+import { NavLink } from 'react-router-dom';
 import './Sidebar.css';
+
+const links = [
+  { to: '/admin', label: 'მიმოხილვა', end: true },
+  { to: '/admin/doctors', label: 'ექიმები' },
+  { to: '/admin/patients', label: 'პაციენტები' },
+  { to: '/admin/settings', label: 'პარამეტრები' },
+];
 
 export default function Sidebar() {
   return (
@@ -8,10 +15,16 @@ export default function Sidebar() {
         <h1>MediBook</h1>
       </div>
       <nav className="sidebar-nav">
-        <a href="#overview" className="nav-link active">მიმოხილვა</a>
-        <a href="#doctors" className="nav-link">ექიმები</a>
-        <a href="#patients" className="nav-link">პაციენტები</a>
-        <a href="#settings" className="nav-link">პარამეტრები</a>
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            end={link.end}
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            {link.label}
+          </NavLink>
+        ))}
       </nav>
     </aside>
   );

@@ -1,24 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #020617; /* მუქი ლურჯი (slate-950) */
-  --bg-surface: #0f172a; /* ზედაპირის/კარტის ფერი (slate-900) */
-  --color-text: #f8fafc; /* მთავარი ტექსტი (slate-50) */
-  --color-accent: #38bdf8; /* ცისფერი აქცენტი (sky-400) */
-  
+  --bg-primary: #020617;
+  --bg-surface: #0f172a;
+  --color-text: #f8fafc;
+  --color-accent: #38bdf8;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
-  
   --radius-md: 12px;
   --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 body {

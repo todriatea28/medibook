@@ -1,110 +1,127 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema } from '../../utils/validation';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Navbar';
+import { supabase } from '../../supabaseClient';
 
 export default function Register() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(registerSchema),
-  });
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const onSubmit = (data) => {
-    console.log("რეგისტრაციის მონაცემები:", data);
-    // აქ მოხდება Supabase-თან დაკავშირება და მომხმარებლის რეგისტრაცია
-    alert("რეგისტრაცია წარმატებით განხორციელდა!");
+  const navigate = useNavigate();
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      // 1. რეგისტრაცია Supabase Auth-ში
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      // 2. პროფილისა და როლის ჩაწერა profiles ცხრილში
+      if (authData.user) {
+        const { error: profileError } = await supabase.from('profiles').insert([
+          {
+            id: authData.user.id,
+            full_name: name,
+            email: email,
+            role: patient,
+          },
+        ]);
+
+        if (profileError) throw profileError;
+      }
+
+      // წარმატებული რეგისტრაციის შემდეგ გადასვლა შესვლის გვერდზე
+      navigate('/login');
+    } catch (err) {
+      setErrorMsg(err.message || 'რეგისტრაციისას მოხდა შეცდომა');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-slate-50 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white border shadow-lg rounded-xl border-slate-100">
-        <div>
-          <h2 className="mt-6 text-3xl font-extrabold text-center text-slate-900">
-            MediBook - რეგისტრაცია
-          </h2>
-          <p className="mt-2 text-sm text-center text-slate-600">
-            შექმენი ანგარიში სისტემაში წვდომისთვის
+    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800">
+      <Navbar />
+
+      <main className="flex items-center justify-center flex-1 p-4 my-8">
+        <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-slate-200 rounded-3xl sm:p-8">
+          <div className="space-y-2 text-center">
+            <h2 className="text-2xl font-bold text-slate-900">ანგარიშის შექმნა</h2>
+            <p className="text-xs text-slate-500">შეავსეთ ფორმა MediBook-ზე დასარეგისტრირებლად</p>
+          </div>
+
+          {errorMsg && (
+            <div className="p-3 text-xs border text-rose-600 bg-rose-50 border-rose-200 rounded-xl">
+              {errorMsg}
+            </div>
+          )}
+
+          <form className="space-y-4" onSubmit={handleRegister}>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">სრული სახელი</label>
+              <input 
+                type="text" 
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="გიორგი გიორგაძე"
+                className="w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">ელ-ფოსტა</label>
+              <input 
+                type="email" 
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
+                className="w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">პაროლი</label>
+              <input 
+                type="password" 
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+
+            
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm shadow-md transition"
+            >
+              {loading ? 'მიმდინარეობს რეგისტრაცია...' : 'რეგისტრაცია'}
+            </button>
+          </form>
+
+          <p className="pt-2 text-xs text-center text-slate-500">
+            უკვე გაქვთ ანგარიში?{' '}
+            <Link to="/login" className="font-semibold text-teal-600 hover:underline">
+              შესვლა
+            </Link>
           </p>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4 rounded-md shadow-sm">
-            {/* სახელი და გვარი */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700">სახელი და გვარი</label>
-              <input
-                {...register("fullName")}
-                type="text"
-                className="relative block w-full px-3 py-2 mt-1 border rounded-md appearance-none border-slate-300 placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-brand focus:border-brand sm:text-sm"
-                placeholder="მაგ: ნინო ბერიძე"
-              />
-              {errors.fullName && <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>}
-            </div>
-
-            {/* ელ-ფოსტა */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700">ელ-ფოსტა</label>
-              <input
-                {...register("email")}
-                type="email"
-                className="relative block w-full px-3 py-2 mt-1 border rounded-md appearance-none border-slate-300 placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-brand focus:border-brand sm:text-sm"
-                placeholder="name@example.com"
-              />
-              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
-            </div>
-
-            {/* ტელეფონის ნომერი */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700">ტელეფონის ნომერი (არასავალდებულო)</label>
-              <input
-                {...register("phone")}
-                type="text"
-                className="relative block w-full px-3 py-2 mt-1 border rounded-md appearance-none border-slate-300 placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-brand focus:border-brand sm:text-sm"
-                placeholder="+995 599 00 00 00"
-              />
-              {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
-            </div>
-
-            {/* პაროლი */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700">პაროლი</label>
-              <input
-                {...register("password")}
-                type="password"
-                className="relative block w-full px-3 py-2 mt-1 border rounded-md appearance-none border-slate-300 placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-brand focus:border-brand sm:text-sm"
-                placeholder="********"
-              />
-              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
-            </div>
-
-            {/* როლის არჩევანი */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700">მომხმარებლის ტიპი (როლი)</label>
-              <select
-                {...register("role")}
-                className="block w-full px-3 py-2 mt-1 bg-white border rounded-md shadow-sm border-slate-300 focus:outline-none focus:ring-brand focus:border-brand sm:text-sm text-slate-900"
-              >
-                <option value="patient">პაციენტი</option>
-                <option value="doctor">ექიმი</option>
-                <option value="admin">ადმინისტრატორი</option>
-              </select>
-              {errors.role && <p className="mt-1 text-xs text-red-500">{errors.role.message}</p>}
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-md group bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-            >
-              რეგისტრაცია
-            </button>
-          </div>
-        </form>
-      </div>
+      </main>
     </div>
   );
 }
