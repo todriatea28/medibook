@@ -1,7 +1,7 @@
 .dashboard-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-primary);
 }
 
@@ -13,9 +13,9 @@
 
 .main-content {
   padding: var(--space-lg);
-  gap: var(--space-lg);
   display: flex;
   flex-direction: column;
+  gap: var(--space-lg);
 }
 
 .stats-grid {

@@ -20,9 +20,7 @@ export default function Header() {
       <div className="profile-section">
         <span className="profile-name">{name}</span>
         <div className="avatar">{initial}</div>
-        <button onClick={handleLogout} className="profile-name" style={{ marginLeft: 12 }}>
-          გასვლა
-        </button>
+        <button onClick={handleLogout} className="logout-btn">გასვლა</button>
       </div>
     </header>
   );
