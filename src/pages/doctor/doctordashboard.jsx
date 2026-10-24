@@ -41,10 +41,10 @@ export default function DoctorDashboard() {
         <header className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 border-b border-blue-500/20 bg-slate-900/50 backdrop-blur-md">
           <h1 className="text-xl font-semibold text-white">ექიმის სამუშაო სივრცე</h1>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-blue-300">ექიმი: <strong className="text-white">დრ. ნინო ბერიძე</strong></span>
-            <a href="/login" className="text-xs bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1.5 rounded-lg hover:bg-rose-500/20 transition">
-              გასვლა
-            </a>
+            <span className="text-sm text-blue-300">ექიმი: <strong className="text-white">{profile?.full_name}</strong></span>
+            <button onClick={async () => { await signOut(); navigate('/login'); }} className="text-xs bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1.5 rounded-lg hover:bg-rose-500/20 transition">
+  გასვლა
+</button>
           </div>
         </header>
 

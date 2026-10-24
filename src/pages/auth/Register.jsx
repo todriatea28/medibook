@@ -1,49 +1,34 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
-import { supabase } from '../../supabaseClient';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import { supabase } from "../../supabaseClient";
 
 export default function Register() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
 
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
+    setErrorMsg("");
 
     try {
-      // 1. რეგისტრაცია Supabase Auth-ში
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const { error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: { data: { full_name: name } },
       });
 
       if (authError) throw authError;
 
-      // 2. პროფილისა და როლის ჩაწერა profiles ცხრილში
-      if (authData.user) {
-        const { error: profileError } = await supabase.from('profiles').insert([
-          {
-            id: authData.user.id,
-            full_name: name,
-            email: email,
-            role: patient,
-          },
-        ]);
-
-        if (profileError) throw profileError;
-      }
-
-      // წარმატებული რეგისტრაციის შემდეგ გადასვლა შესვლის გვერდზე
-      navigate('/login');
+      navigate("/login");
     } catch (err) {
-      setErrorMsg(err.message || 'რეგისტრაციისას მოხდა შეცდომა');
+      setErrorMsg(err.message || "რეგისტრაციისას მოხდა შეცდომა");
     } finally {
       setLoading(false);
     }
@@ -56,8 +41,12 @@ export default function Register() {
       <main className="flex items-center justify-center flex-1 p-4 my-8">
         <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-slate-200 rounded-3xl sm:p-8">
           <div className="space-y-2 text-center">
-            <h2 className="text-2xl font-bold text-slate-900">ანგარიშის შექმნა</h2>
-            <p className="text-xs text-slate-500">შეავსეთ ფორმა MediBook-ზე დასარეგისტრირებლად</p>
+            <h2 className="text-2xl font-bold text-slate-900">
+              ანგარიშის შექმნა
+            </h2>
+            <p className="text-xs text-slate-500">
+              შეავსეთ ფორმა MediBook-ზე დასარეგისტრირებლად
+            </p>
           </div>
 
           {errorMsg && (
@@ -68,9 +57,11 @@ export default function Register() {
 
           <form className="space-y-4" onSubmit={handleRegister}>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">სრული სახელი</label>
-              <input 
-                type="text" 
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                სრული სახელი
+              </label>
+              <input
+                type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -80,9 +71,11 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">ელ-ფოსტა</label>
-              <input 
-                type="email" 
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                ელ-ფოსტა
+              </label>
+              <input
+                type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -92,9 +85,11 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">პაროლი</label>
-              <input 
-                type="password" 
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                პაროლი
+              </label>
+              <input
+                type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -103,20 +98,21 @@ export default function Register() {
               />
             </div>
 
-            
-
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className="w-full py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm shadow-md transition"
             >
-              {loading ? 'მიმდინარეობს რეგისტრაცია...' : 'რეგისტრაცია'}
+              {loading ? "მიმდინარეობს რეგისტრაცია..." : "რეგისტრაცია"}
             </button>
           </form>
 
           <p className="pt-2 text-xs text-center text-slate-500">
-            უკვე გაქვთ ანგარიში?{' '}
-            <Link to="/login" className="font-semibold text-teal-600 hover:underline">
+            უკვე გაქვთ ანგარიში?{" "}
+            <Link
+              to="/login"
+              className="font-semibold text-teal-600 hover:underline"
+            >
               შესვლა
             </Link>
           </p>
