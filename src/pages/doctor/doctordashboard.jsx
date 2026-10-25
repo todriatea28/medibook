@@ -1,87 +1,66 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppointments } from '../../hooks/useAppointments';
+import { useAuth } from '../../context/AuthContext';
 import Card from '../../components/Card/Card';
 
+const STATUS_LABELS = { pending: 'მოლოდინში', confirmed: 'დადასტურებული', cancelled: 'გაუქმებული' };
+
 export default function DoctorDashboard() {
-  // იყენებს Custom Hook-ს მონაცემთა მოსატანად (SRP პრინციპი)
   const { appointments, loading } = useAppointments();
+  const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/login');
+  };
 
   return (
-    <div className="flex min-h-screen text-white bg-slate-950">
-      
-      {/* გვერდითი მენიუ (Sidebar) */}
-      <aside className="hidden w-64 p-6 border-r bg-slate-900/80 border-blue-500/25 md:block backdrop-blur-md">
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-transparent bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text">
-            MediBook Doctor
-          </h2>
-          <p className="mt-1 text-xs text-blue-300">ექიმის პანელი</p>
+    <div className="min-h-screen bg-slate-50 text-slate-800">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+        <h1 className="text-xl font-bold text-teal-600">MediBook · ექიმის სივრცე</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-slate-500">
+            ექიმი: <strong className="text-slate-900">{profile?.full_name}</strong>
+          </span>
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition"
+          >
+            გასვლა
+          </button>
         </div>
+      </header>
 
-        <nav aria-label="ექიმის მენიუ">
-          <ul className="space-y-3 text-sm font-medium text-blue-200">
-            <li>
-              <a href="#appointments" className="block px-4 py-2.5 rounded-xl bg-blue-600/20 border border-blue-500/30 text-white transition">
-                ჩემი ვიზიტები
-              </a>
-            </li>
-            <li>
-              <a href="#schedule" className="block px-4 py-2.5 rounded-xl hover:bg-slate-800/60 hover:text-sky-400 transition">
-                განრიგი / საათები
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+      <main className="p-6 mx-auto space-y-6 max-w-7xl md:p-8">
+        <h2 className="text-lg font-bold text-slate-900">ჩემი ვიზიტები</h2>
 
-      {/* ძირითადი კონტენტი */}
-      <div className="flex flex-col flex-1 min-w-0">
-        
-        {/* ზედა ნავიგაცია (<header>) */}
-        <header className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 border-b border-blue-500/20 bg-slate-900/50 backdrop-blur-md">
-          <h1 className="text-xl font-semibold text-white">ექიმის სამუშაო სივრცე</h1>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-blue-300">ექიმი: <strong className="text-white">{profile?.full_name}</strong></span>
-            <button onClick={async () => { await signOut(); navigate('/login'); }} className="text-xs bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1.5 rounded-lg hover:bg-rose-500/20 transition">
-  გასვლა
-</button>
-          </div>
-        </header>
-
-        {/* მთავარი შიგთავსი (<main>) */}
-        <main className="p-6 space-y-8 overflow-y-auto md:p-8">
-          
-          <section id="appointments">
-            <h2 className="mb-4 text-lg font-bold text-blue-100">დღევანდელი ვიზიტები (მოდულარული მონაცემები)</h2>
-            
-            {loading ? (
-              <p className="text-sm text-sky-400">მონაცემები იტვირთება...</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {/* DRY პრინციპი: .map() მეთოდის გამოყენება და ზოგადი Card კომპონენტი (OCP) */}
-                {appointments.map((item) => (
-                  <Card key={item.id}>
-                    <h3 className="text-sm font-medium text-blue-300">პაციენტი: {item.patientName}</h3>
-                    <p className="mt-2 text-2xl font-extrabold text-white">{item.doctorName}</p>
-                    <p className="mt-1 text-xs text-sky-400">დრო: {item.date}</p>
-                    <span className="inline-block mt-3 px-2.5 py-1 bg-sky-500/10 text-sky-400 rounded-full text-xs">
-                      სტატუსი: {item.status}
-                    </span>
-                  </Card>
-                ))}
-              </div>
-            )}
+        {loading ? (
+          <p className="text-sm text-teal-600">მონაცემები იტვირთება...</p>
+        ) : appointments.length === 0 ? (
+          <p className="text-sm text-slate-500">ვიზიტები ჯერ არ არის.</p>
+        ) : (
+          <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {appointments.map((item) => (
+              <Card key={item.id}>
+                <p className="text-xs text-slate-500">პაციენტი</p>
+                <p className="mt-1 text-lg font-bold text-slate-900">{item.patientName}</p>
+                <p className="mt-2 text-xs text-teal-600">დრო: {item.date}</p>
+                <span className="inline-flex items-center gap-2 px-2.5 py-1 mt-3 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200 rounded-full">
+                  {item.status === 'confirmed' && (
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 pulse-indicator"></span>
+                  )}
+                  {STATUS_LABELS[item.status] ?? item.status}
+                </span>
+              </Card>
+            ))}
           </section>
+        )}
+      </main>
 
-        </main>
-
-        {/* ფუტერი (<footer>) */}
-        <footer className="px-6 py-4 text-xs text-center text-blue-400 border-t border-blue-500/20 bg-slate-900/40">
-          <p>&copy; 2026 MediBook Doctor Portal. ყველა უფლება დაცულია.</p>
-        </footer>
-
-      </div>
-
+      <footer className="px-6 py-4 text-xs text-center border-t text-slate-500 border-slate-200">
+        &copy; 2026 MediBook
+      </footer>
     </div>
   );
 }
