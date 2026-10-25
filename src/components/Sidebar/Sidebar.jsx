@@ -5,7 +5,7 @@ const links = [
   { to: '/admin', label: 'მიმოხილვა', end: true },
   { to: '/admin/doctors', label: 'ექიმები' },
   { to: '/admin/patients', label: 'პაციენტები' },
-  { to: '/admin/settings', label: 'პარამეტრები' },
+  { to: '/admin/settings', label: 'ვიზიტები' },
 ];
 
 export default function Sidebar() {

@@ -9,7 +9,7 @@ import Overview from './pages/admin/overview';
 import Patients from './pages/admin/patients';
 import Settings from './pages/admin/settings';
 import DoctorDashboard from './pages/doctor/doctordashboard';
-import Schedule from './pages/doctor/schedule';
+import NotFound from './pages/NotFound';
 import Layout from './components/Layout/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -41,9 +41,7 @@ export default function App() {
   <Route path="/patient" element={<PatientDashboard />} />
   <Route path="/patient/book/:doctorId" element={<BookAppointment />} />
 </Route>
-          <Route element={<ProtectedRoute allowedRoles={['patient', 'doctor', 'admin']} />}>
-            <Route path="/schedule" element={<Schedule />} />
-          </Route>
+         <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>
