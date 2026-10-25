@@ -13,6 +13,8 @@ import Schedule from './pages/doctor/schedule';
 import Layout from './components/Layout/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
+import PatientDashboard from './pages/patient/patientdashboard';
+import BookAppointment from './pages/patient/bookappoitment';
 
 export default function App() {
   return (
@@ -35,7 +37,10 @@ export default function App() {
           <Route element={<ProtectedRoute allowedRoles={['doctor']} />}>
             <Route path="/doctor" element={<DoctorDashboard />} />
           </Route>
-
+<Route element={<ProtectedRoute allowedRoles={['patient']} />}>
+  <Route path="/patient" element={<PatientDashboard />} />
+  <Route path="/patient/book/:doctorId" element={<BookAppointment />} />
+</Route>
           <Route element={<ProtectedRoute allowedRoles={['patient', 'doctor', 'admin']} />}>
             <Route path="/schedule" element={<Schedule />} />
           </Route>

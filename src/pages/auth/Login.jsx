@@ -39,11 +39,11 @@ export default function Login() {
 
         // 3. გადამისამართება როლის მიხედვით
         if (userRole === 'admin') {
-         navigate('/admin');
+          navigate('/admin');
         } else if (userRole === 'doctor') {
-          navigate('/doctor'); // ექიმის პანელი
+          navigate('/doctor');
         } else {
-          navigate('/schedule'); // პაციენტისთვის ჯავშნის განრიგი
+          navigate('/patient');
         }
       }
     } catch (err) {
