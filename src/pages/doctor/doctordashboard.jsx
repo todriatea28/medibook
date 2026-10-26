@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAppointments } from "../../hooks/useAppointments";
 import { useAuth } from "../../context/AuthContext";
 import { appointmentService } from "../../services/appointmentService";
 import Card from "../../components/Card/Card";
 import Modal from "../../components/Modal/Modal";
+import { supabase } from '../../supabaseClient';
+import ScheduleEditor from '../../components/ScheduleEditor';
 
 const STATUS_LABELS = {
   pending: "მოლოდინში",
@@ -30,8 +32,19 @@ const todayStr = () => new Date().toISOString().slice(0, 10);
 
 export default function DoctorDashboard() {
   const { appointments, loading, error, updateLocal } = useAppointments();
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const [doctorId, setDoctorId] = useState(null);
+
+useEffect(() => {
+  if (!user) return;
+  supabase
+    .from('doctors')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+    .then(({ data }) => setDoctorId(data?.id ?? null));
+}, [user]);
 
   const [filter, setFilter] = useState("all");
   const [actionError, setActionError] = useState("");
@@ -253,6 +266,7 @@ export default function DoctorDashboard() {
             ))}
           </section>
         )}
+        {doctorId && <ScheduleEditor doctorId={doctorId} />}
       </main>
 
       <footer className="px-6 py-4 text-xs text-center border-t text-slate-500 border-slate-200">
