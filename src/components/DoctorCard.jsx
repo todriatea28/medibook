@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function DoctorCard({ doctor }) {
+function DoctorCard({ doctor }) {
   return (
     <article
       data-id={doctor.id}
@@ -22,3 +23,5 @@ export default function DoctorCard({ doctor }) {
     </article>
   );
 }
+
+export default memo(DoctorCard);
