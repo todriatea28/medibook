@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { appointmentService } from '../services/appointmentService';
+import { useState, useEffect, useCallback } from "react";
+import { appointmentService } from "../services/appointmentService";
 
 export function useAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -11,11 +11,17 @@ export function useAppointments() {
       .getAppointments()
       .then(setAppointments)
       .catch((err) => {
-        console.error('შეცდომა ვიზიტების ჩატვირთვისას:', err);
+        console.error("შეცდომა ვიზიტების ჩატვირთვისას:", err);
         setError(err);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  return { appointments, loading, error };
+  const updateLocal = useCallback((id, patch) => {
+    setAppointments((list) =>
+      list.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+    );
+  }, []);
+
+  return { appointments, loading, error, updateLocal };
 }

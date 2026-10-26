@@ -1,38 +1,75 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Navbar from "../../components/Navbar";
 import { supabase } from "../../supabaseClient";
+import { registerSchema, translateAuthError } from "../../utils/validation";
+
+const inputClass =
+  "w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500";
+const labelClass = "block text-xs font-semibold text-slate-700 mb-1.5";
 
 export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-
+  const [serverError, setServerError] = useState("");
+  const [needsConfirm, setNeedsConfirm] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(registerSchema) });
 
+  const onSubmit = async ({ fullName, email, password }) => {
+    setServerError("");
     try {
-      const { error: authError } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name } },
+        options: { data: { full_name: fullName } },
       });
+      if (error) throw error;
 
-      if (authError) throw authError;
-
-      navigate("/login");
+      // სესია არ არსებობს => ჩართულია ელ-ფოსტის დადასტურება
+      if (!data.session) {
+        setNeedsConfirm(true);
+        return;
+      }
+      navigate("/patient");
     } catch (err) {
-      setErrorMsg(err.message || "რეგისტრაციისას მოხდა შეცდომა");
-    } finally {
-      setLoading(false);
+      setServerError(translateAuthError(err.message));
     }
   };
+
+  if (needsConfirm) {
+    return (
+      <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800">
+        <Navbar />
+        <main className="flex items-center justify-center flex-1 p-4 my-8">
+          <div
+            role="status"
+            className="w-full max-w-md p-8 space-y-4 text-center bg-white border shadow-xl border-slate-200 rounded-3xl"
+          >
+            <div className="text-4xl">📧</div>
+            <h1 className="text-xl font-bold text-slate-900">
+              შეამოწმეთ ელ-ფოსტა
+            </h1>
+            <p className="text-sm text-slate-600">
+              დადასტურების წერილი გამოგიგზავნეთ. ბმულზე გადასვლის შემდეგ
+              შეგეძლებათ სისტემაში შესვლა.
+            </p>
+            <Link
+              to="/login"
+              className="inline-block px-5 py-2.5 text-sm font-semibold text-white bg-teal-600 rounded-xl hover:bg-teal-500"
+            >
+              შესვლის გვერდზე
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800">
@@ -41,69 +78,88 @@ export default function Register() {
       <main className="flex items-center justify-center flex-1 p-4 my-8">
         <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-slate-200 rounded-3xl sm:p-8">
           <div className="space-y-2 text-center">
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-slate-900">
               ანგარიშის შექმნა
-            </h2>
+            </h1>
             <p className="text-xs text-slate-500">
               შეავსეთ ფორმა MediBook-ზე დასარეგისტრირებლად
             </p>
           </div>
 
-          {errorMsg && (
-            <div className="p-3 text-xs border text-rose-600 bg-rose-50 border-rose-200 rounded-xl">
-              {errorMsg}
+          {serverError && (
+            <div
+              role="alert"
+              className="p-3 text-xs border text-rose-600 bg-rose-50 border-rose-200 rounded-xl"
+            >
+              {serverError}
             </div>
           )}
 
-          <form className="space-y-4" onSubmit={handleRegister}>
+          <form
+            className="space-y-4"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+          >
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="fullName" className={labelClass}>
                 სრული სახელი
               </label>
               <input
+                id="fullName"
                 type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
                 placeholder="გიორგი გიორგაძე"
-                className="w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className={inputClass}
+                {...register("fullName")}
               />
+              {errors.fullName && (
+                <p className="mt-1 text-xs text-rose-600">
+                  {errors.fullName.message}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="email" className={labelClass}>
                 ელ-ფოსტა
               </label>
               <input
+                id="email"
                 type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className={inputClass}
+                {...register("email")}
               />
+              {errors.email && (
+                <p className="mt-1 text-xs text-rose-600">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="password" className={labelClass}>
                 პაროლი
               </label>
               <input
+                id="password"
                 type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                placeholder="მინიმუმ 6 სიმბოლო"
+                className={inputClass}
+                {...register("password")}
               />
+              {errors.password && (
+                <p className="mt-1 text-xs text-rose-600">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm shadow-md transition"
+              disabled={isSubmitting}
+              className="w-full py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? "მიმდინარეობს რეგისტრაცია..." : "რეგისტრაცია"}
+              {isSubmitting ? "მიმდინარეობს რეგისტრაცია..." : "რეგისტრაცია"}
             </button>
           </form>
 

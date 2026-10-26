@@ -41,10 +41,18 @@
 
 @media (max-width: 768px) {
   .site-sidebar {
-    border-right: none;
-    border-bottom: 1px solid var(--color-border);
-    padding: var(--space-md);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
   }
-  .sidebar-brand h1 { margin-bottom: var(--space-md); }
-  .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+  .site-sidebar.open {
+    transform: translateX(0);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+  }
 }
