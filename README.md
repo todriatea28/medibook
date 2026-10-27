@@ -35,5 +35,5 @@
 
 1. **რეპოზიტორის კლონირება:**
    ```bash
-   git clone 
+   git clone [https://github.com/todriatea28/medibook.git]
    cd medihub
