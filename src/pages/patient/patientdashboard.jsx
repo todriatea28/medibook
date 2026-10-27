@@ -6,8 +6,8 @@ import DoctorCard from '../../components/DoctorCard';
 import RatingModal from '../../components/RatingModal';
 import { doctorService } from '../../services/doctorService';
 import { appointmentService } from '../../services/appointmentService';
-import { useDoctorSearch } from '../../hooks/useDoctorSearch';
 import { useAuth } from '../../context/AuthContext';
+import { useMediStore } from '../../store/useMediStore'; // Zustand Store-ის იმპორტი
 
 const STATUS_LABELS = {
   pending: 'მოლოდინში',
@@ -20,32 +20,43 @@ export default function PatientDashboard() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const [doctors, setDoctors] = useState([]);
   const [isFallback, setIsFallback] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [myAppointments, setMyAppointments] = useState([]);
   const [actionError, setActionError] = useState('');
 
   // რეფენსები შეფასების მოდალისთვის
   const [ratingModalOpen, setRatingModalOpen] = useState(false);
   const [selectedDoctorForRating, setSelectedDoctorForRating] = useState(null);
 
-  const { searchInput, onSearchChange, searching, specialty, setSpecialty, specialties, filtered } =
-    useDoctorSearch(doctors);
+  // Zustand გლობალური სთეითიდან მონაცემებისა და მეთოდების ამოღება
+  const {
+    doctors,
+    setDoctors,
+    appointments,
+    setAppointments,
+    searchQuery,
+    setSearchQuery,
+    selectedSpecialty,
+    setSelectedSpecialty,
+    cancelAppointment,
+  } = useMediStore();
 
   useEffect(() => {
     (async () => {
-      const { data, isFallback } = await doctorService.getDoctors();
-      setDoctors(data);
-      setIsFallback(isFallback);
-      setLoading(false);
       try {
-        setMyAppointments(await appointmentService.getMyAppointments());
+        const { data, isFallback } = await doctorService.getDoctors();
+        setDoctors(data);
+        setIsFallback(isFallback);
+
+        const myApps = await appointmentService.getMyAppointments();
+        setAppointments(myApps);
       } catch (err) {
-        console.warn('ჩემი ვიზიტები ვერ ჩაიტვირთა:', err.message);
+        console.warn('მონაცემები ვერ ჩაიტვირთა:', err.message);
+      } finally {
+        setLoading(false);
       }
     })();
-  }, []);
+  }, [setDoctors, setAppointments]);
 
   const handleLogout = async () => {
     await signOut();
@@ -57,7 +68,7 @@ export default function PatientDashboard() {
     setActionError('');
     try {
       await appointmentService.cancel(id);
-      setMyAppointments((list) => list.map((a) => (a.id === id ? { ...a, status: 'cancelled' } : a)));
+      cancelAppointment(id); // განახლდება გლობალური სთეითი მყისიერად
     } catch (err) {
       setActionError(err.message);
     }
@@ -68,6 +79,17 @@ export default function PatientDashboard() {
     setSelectedDoctorForRating(doctor);
     setRatingModalOpen(true);
   };
+
+  // ძებნისა და ფილტრაციის ლოგიკა გლობალური სთეითიდან
+  const filteredDoctors = doctors.filter((doc) => {
+    const docName = doc.name || doc.full_name || '';
+    const matchesSearch = docName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSpecialty = !selectedSpecialty || doc.specialty === selectedSpecialty;
+    return matchesSearch && matchesSpecialty;
+  });
+
+  // უნიკალური სპეციალობების სია
+  const specialties = [...new Set(doctors.map((d) => d.specialty).filter(Boolean))];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-rose-50/20 to-stone-100 text-stone-800">
@@ -104,21 +126,16 @@ export default function PatientDashboard() {
               />
               <input
                 type="search"
-                value={searchInput}
-                onChange={onSearchChange}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="მოძებნე სახელით..."
                 aria-label="ექიმის ძებნა"
                 className="w-full py-3 pr-4 text-sm bg-white border pl-11 border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-800 text-stone-900"
               />
-              {searching && (
-                <span className="absolute text-xs -translate-y-1/2 text-rose-800 right-4 top-1/2 animate-pulse">
-                  იძებნება...
-                </span>
-              )}
             </div>
             <select
-              value={specialty}
-              onChange={(e) => setSpecialty(e.target.value)}
+              value={selectedSpecialty}
+              onChange={(e) => setSelectedSpecialty(e.target.value)}
               aria-label="სპეციალობა"
               className="px-4 py-3 text-sm bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-800 text-stone-900"
             >
@@ -133,11 +150,11 @@ export default function PatientDashboard() {
 
           {loading ? (
             <p className="text-sm text-rose-900">იტვირთება...</p>
-          ) : filtered.length === 0 ? (
+          ) : filteredDoctors.length === 0 ? (
             <p className="text-sm text-stone-500">ექიმი ვერ მოიძებნა.</p>
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {filtered.map((d) => (
+              {filteredDoctors.map((d) => (
                 <DoctorCard key={d.id} doctor={d} />
               ))}
             </div>
@@ -153,11 +170,11 @@ export default function PatientDashboard() {
             </div>
           )}
 
-          {myAppointments.length === 0 ? (
+          {appointments.length === 0 ? (
             <p className="text-sm text-stone-500">ვიზიტები ჯერ არ გაქვთ.</p>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {myAppointments.map((a) => (
+              {appointments.map((a) => (
                 <article
                   key={a.id}
                   className="p-5 space-y-3 border shadow-sm bg-white/90 backdrop-blur-md rounded-2xl border-stone-200"
