@@ -1,16 +1,39 @@
-# React + Vite
+# 🩺 MediHub — სამედიცინო პლატფორმა და ვიზიტების მართვის სისტემა
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**MediHub** არის თანამედროვე, სრულფასოვანი სამედიცინო პლატფორმა, რომელიც აერთიანებს პაციენტებს, ექიმებსა და კლინიკის ადმინისტრაციას ერთ ციფრულ სივრცეში. პროექტი შექმნილია Front-end პრაქტიკული პროექტის ფარგლებში და იყენებს თანამედროვე ვებ ტექნოლოგიებს.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ ტექნოლოგიური სტექი (Tech Stack)
+* **Frontend:** React, Vite, Tailwind CSS, React Hook Form, Zod
+* **Routing:** React Router DOM
+* **Backend & Database:** Supabase (PostgreSQL, Row Level Security, Supabase Auth / JWT)
+* **Icons & UI Assets:** Lucide React / SVG, Responsive Glassmorphism Design
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ ძირითადი როლები და ფუნქციონალი
 
-## Expanding the Oxlint configuration
+1. **👤 პაციენტი (Patient):**
+   * ექიმების ძებნა სპეციალობისა და სახელის მიხედვით.
+   * თავისუფალი დროის სლოტების არჩევა და ონლაინ ვიზიტის დაჯავშნა.
+   * საკუთარი ჯავშნებისა და ისტორიის ნახვა ("ჩემი ვიზიტები").
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+2. **⚕️ ექიმი (Doctor):**
+   * სამუშაო განრიგისა და კალენდრის მართვა (`ScheduleEditor`).
+   * პაციენტების ვიზიტების ისტორიისა და სტატუსების მართვა.
+   * დიაგნოზისა და დანიშნულების ჩაწერა.
+
+3. **🛠️ ადმინისტრატორი (Admin):**
+   * ექიმების დამატება და მართვა.
+   * სისტემური ვიზიტებისა და გაუქმებების კოორდინაცია.
+   * სტატისტიკური მონაცემების კონტროლი.
+
+---
+
+## 🚀 პროექტის გაშვება ლოკალურად (Local Installation)
+
+1. **რეპოზიტორის კლონირება:**
+   ```bash
+   git clone 
+   cd medihub
