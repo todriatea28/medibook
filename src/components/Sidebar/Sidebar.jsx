@@ -12,7 +12,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
   return (
     <aside className={`site-sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-brand">
-        <h1>MediBook</h1>
+        <h1>Medihub</h1>
       </div>
       <nav className="sidebar-nav" aria-label="ადმინის მენიუ">
         {links.map((link) => (

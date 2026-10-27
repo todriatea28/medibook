@@ -7,8 +7,8 @@ import { supabase } from "../../supabaseClient";
 import { registerSchema, translateAuthError } from "../../utils/validation";
 
 const inputClass =
-  "w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500";
-const labelClass = "block text-xs font-semibold text-slate-700 mb-1.5";
+  "w-full px-4 py-3 text-sm border bg-stone-50 border-stone-300 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-800";
+const labelClass = "block text-xs font-semibold text-stone-700 mb-1.5";
 
 export default function Register() {
   const [serverError, setServerError] = useState("");
@@ -44,24 +44,24 @@ export default function Register() {
 
   if (needsConfirm) {
     return (
-      <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800">
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-stone-50 via-rose-50/20 to-stone-100 text-stone-800">
         <Navbar />
         <main className="flex items-center justify-center flex-1 p-4 my-8">
           <div
             role="status"
-            className="w-full max-w-md p-8 space-y-4 text-center bg-white border shadow-xl border-slate-200 rounded-3xl"
+            className="w-full max-w-md p-8 space-y-4 text-center bg-white border shadow-xl border-stone-200 rounded-3xl"
           >
             <div className="text-4xl">📧</div>
-            <h1 className="text-xl font-bold text-slate-900">
+            <h1 className="text-xl font-bold text-stone-900">
               შეამოწმეთ ელ-ფოსტა
             </h1>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-stone-600">
               დადასტურების წერილი გამოგიგზავნეთ. ბმულზე გადასვლის შემდეგ
               შეგეძლებათ სისტემაში შესვლა.
             </p>
             <Link
               to="/login"
-              className="inline-block px-5 py-2.5 text-sm font-semibold text-white bg-teal-600 rounded-xl hover:bg-teal-500"
+              className="inline-block px-5 py-2.5 text-sm font-semibold text-white bg-rose-900 rounded-xl hover:bg-rose-800 shadow-md shadow-rose-900/20 transition"
             >
               შესვლის გვერდზე
             </Link>
@@ -72,17 +72,17 @@ export default function Register() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-stone-50 via-rose-50/20 to-stone-100 text-stone-800">
       <Navbar />
 
       <main className="flex items-center justify-center flex-1 p-4 my-8">
-        <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-slate-200 rounded-3xl sm:p-8">
+        <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-stone-200 rounded-3xl sm:p-8">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-stone-900">
               ანგარიშის შექმნა
             </h1>
-            <p className="text-xs text-slate-500">
-              შეავსეთ ფორმა MediBook-ზე დასარეგისტრირებლად
+            <p className="text-xs text-stone-500">
+              შეავსეთ ფორმა medihub-ზე დასარეგისტრირებლად
             </p>
           </div>
 
@@ -157,17 +157,17 @@ export default function Register() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-3.5 bg-rose-900 hover:bg-rose-800 text-white font-semibold rounded-xl text-sm shadow-md shadow-rose-900/20 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "მიმდინარეობს რეგისტრაცია..." : "რეგისტრაცია"}
             </button>
           </form>
 
-          <p className="pt-2 text-xs text-center text-slate-500">
+          <p className="pt-2 text-xs text-center text-stone-500">
             უკვე გაქვთ ანგარიში?{" "}
             <Link
               to="/login"
-              className="font-semibold text-teal-600 hover:underline"
+              className="font-semibold text-rose-900 hover:underline"
             >
               შესვლა
             </Link>

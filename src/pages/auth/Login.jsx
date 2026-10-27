@@ -7,8 +7,8 @@ import { supabase } from "../../supabaseClient";
 import { loginSchema, translateAuthError } from "../../utils/validation";
 
 const inputClass =
-  "w-full px-4 py-3 text-sm border bg-slate-50 border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500";
-const labelClass = "block text-xs font-semibold text-slate-700 mb-1.5";
+  "w-full px-4 py-3 text-sm border bg-stone-50 border-stone-300 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-800";
+const labelClass = "block text-xs font-semibold text-stone-700 mb-1.5";
 
 export default function Login() {
   const [serverError, setServerError] = useState("");
@@ -50,16 +50,16 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-stone-50 via-rose-50/20 to-stone-100 text-stone-800">
       <Navbar />
 
       <main className="flex items-center justify-center flex-1 p-4 my-8">
-        <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-slate-200 rounded-3xl sm:p-8">
+        <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-stone-200 rounded-3xl sm:p-8">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-stone-900">
               სისტემაში შესვლა
             </h1>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-stone-500">
               შეიყვანეთ თქვენი მონაცემები ანგარიშზე წვდომისთვის
             </p>
           </div>
@@ -117,17 +117,17 @@ export default function Login() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-3.5 bg-rose-900 hover:bg-rose-800 text-white font-semibold rounded-xl text-sm shadow-md shadow-rose-900/20 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "მიმდინარეობს შესვლა..." : "შესვლა"}
             </button>
           </form>
 
-          <p className="pt-2 text-xs text-center text-slate-500">
+          <p className="pt-2 text-xs text-center text-stone-500">
             არ გაქვთ ანგარიში?{" "}
             <Link
               to="/register"
-              className="font-semibold text-teal-600 hover:underline"
+              className="font-semibold text-rose-900 hover:underline"
             >
               რეგისტრაცია
             </Link>
