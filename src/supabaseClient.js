@@ -1,6 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'შენი_პროექტის_URL'
-const supabaseAnonKey = 'შენი_ANON_გასაღები'
+const url = import.meta.env.VITE_SUPABASE_URL
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+if (!url || !key) {
+  throw new Error('VITE_SUPABASE_URL ან VITE_SUPABASE_ANON_KEY არ არის მითითებული .env ფაილში')
+}
+
+export const supabase = createClient(url, key)

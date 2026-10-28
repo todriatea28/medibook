@@ -1,28 +1,55 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand: #0d9488;
+  --color-brand-light: #14b8a6;
+  --color-brand-dark: #0f766e;
+}
+
 :root {
-  --bg-primary: #020617; /* მუქი ლურჯი (slate-950) */
-  --bg-surface: #0f172a; /* ზედაპირის/კარტის ფერი (slate-900) */
-  --color-text: #f8fafc; /* მთავარი ტექსტი (slate-50) */
-  --color-accent: #38bdf8; /* ცისფერი აქცენტი (sky-400) */
-  
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --color-text: #1e293b;
+  --color-muted: #64748b;
+  --color-accent: #0d9488;
+  --color-border: #e2e8f0;
+
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
-  
-  --radius-md: 12px;
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-}
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--color-text);
   font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* მიკრო-ინტერაქციები (დავალება №10): მხოლოდ transform და opacity */
+.doctor-card {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+.doctor-card:hover {
+  transform: translateY(-4px);
+}
+
+@keyframes pulse-dot {
+  0%   { transform: scale(0.95); opacity: 0.7; }
+  50%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.7; }
+}
+.pulse-indicator {
+  animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+button:focus-visible,
+a:focus-visible,
+.doctor-card:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
 }

@@ -1,24 +1,27 @@
-import { useState, useEffect } from 'react';
-import { appointmentService } from '../services/appointmentService';
+import { useState, useEffect, useCallback } from "react";
+import { appointmentService } from "../services/appointmentService";
 
 export function useAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function loadAppointments() {
-      try {
-        const data = await appointmentService.getAppointments();
-        setAppointments(data);
-      } catch (error) {
-        console.error("შეცდომა ვიზიტების ჩატვირთვისას:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadAppointments();
+    appointmentService
+      .getAppointments()
+      .then(setAppointments)
+      .catch((err) => {
+        console.error("შეცდომა ვიზიტების ჩატვირთვისას:", err);
+        setError(err);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  return { appointments, loading };
+  const updateLocal = useCallback((id, patch) => {
+    setAppointments((list) =>
+      list.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+    );
+  }, []);
+
+  return { appointments, loading, error, updateLocal };
 }

@@ -1,71 +1,139 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema } from '../../utils/validation';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Navbar from "../../components/Navbar";
+import { supabase } from "../../supabaseClient";
+import { loginSchema, translateAuthError } from "../../utils/validation";
+
+const inputClass =
+  "w-full px-4 py-3 text-sm border bg-stone-50 border-stone-300 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-800";
+const labelClass = "block text-xs font-semibold text-stone-700 mb-1.5";
 
 export default function Login() {
+  const [serverError, setServerError] = useState("");
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(loginSchema),
-  });
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(loginSchema) });
 
-  const onSubmit = (data) => {
-    console.log("შესვლის მონაცემები:", data);
-    alert("ავტორიზაცია წარმატებით განხორციელდა!");
+  const onSubmit = async ({ email, password }) => {
+    setServerError("");
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+      if (profileError) throw profileError;
+      if (!profile) {
+        setServerError("თქვენი პროფილი ვერ მოიძებნა. მიმართეთ ადმინისტრატორს.");
+        await supabase.auth.signOut();
+        return;
+      }
+
+      if (profile.role === "admin") navigate("/admin");
+      else if (profile.role === "doctor") navigate("/doctor");
+      else navigate("/patient");
+    } catch (err) {
+      setServerError(translateAuthError(err.message));
+    }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-slate-50 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white border shadow-lg rounded-xl border-slate-100">
-        <div>
-          <h2 className="mt-6 text-3xl font-extrabold text-center text-slate-900">
-            MediBook - ავტორიზაცია
-          </h2>
-          <p className="mt-2 text-sm text-center text-slate-600">
-            გთხოვთ გაიაროთ ავტორიზაცია სისტემაში შესასვლელად
-          </p>
-        </div>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-stone-50 via-rose-50/20 to-stone-100 text-stone-800">
+      <Navbar />
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4 rounded-md shadow-sm">
-            {/* ელ-ფოსტა */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700">ელ-ფოსტა</label>
-              <input
-                {...register("email")}
-                type="email"
-                className="block w-full px-3 py-2 mt-1 border rounded-md border-slate-300 placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
-                placeholder="name@example.com"
-              />
-              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
-            </div>
-
-            {/* პაროლი */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700">პაროლი</label>
-              <input
-                {...register("password")}
-                type="password"
-                className="block w-full px-3 py-2 mt-1 border rounded-md border-slate-300 placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
-                placeholder="********"
-              />
-              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
-            </div>
+      <main className="flex items-center justify-center flex-1 p-4 my-8">
+        <div className="w-full max-w-md p-6 space-y-6 bg-white border shadow-xl border-stone-200 rounded-3xl sm:p-8">
+          <div className="space-y-2 text-center">
+            <h1 className="text-2xl font-bold text-stone-900">
+              სისტემაში შესვლა
+            </h1>
+            <p className="text-xs text-stone-500">
+              შეიყვანეთ თქვენი მონაცემები ანგარიშზე წვდომისთვის
+            </p>
           </div>
 
-          <div>
+          {serverError && (
+            <div
+              role="alert"
+              className="p-3 text-xs border text-rose-600 bg-rose-50 border-rose-200 rounded-xl"
+            >
+              {serverError}
+            </div>
+          )}
+
+          <form
+            className="space-y-4"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+          >
+            <div>
+              <label htmlFor="email" className={labelClass}>
+                ელ-ფოსტა
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                className={inputClass}
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-rose-600">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="password" className={labelClass}>
+                პაროლი
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                className={inputClass}
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="mt-1 text-xs text-rose-600">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
             <button
               type="submit"
-              className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-md bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+              disabled={isSubmitting}
+              className="w-full py-3.5 bg-rose-900 hover:bg-rose-800 text-white font-semibold rounded-xl text-sm shadow-md shadow-rose-900/20 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              შესვლა
+              {isSubmitting ? "მიმდინარეობს შესვლა..." : "შესვლა"}
             </button>
-          </div>
-        </form>
-      </div>
+          </form>
+
+          <p className="pt-2 text-xs text-center text-stone-500">
+            არ გაქვთ ანგარიში?{" "}
+            <Link
+              to="/register"
+              className="font-semibold text-rose-900 hover:underline"
+            >
+              რეგისტრაცია
+            </Link>
+          </p>
+        </div>
+      </main>
     </div>
   );
 }

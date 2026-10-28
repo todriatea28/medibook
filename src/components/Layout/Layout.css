@@ -1,7 +1,7 @@
 .dashboard-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-primary);
 }
 
@@ -13,9 +13,9 @@
 
 .main-content {
   padding: var(--space-lg);
-  gap: var(--space-lg);
   display: flex;
   flex-direction: column;
+  gap: var(--space-lg);
 }
 
 .stats-grid {
@@ -27,5 +27,18 @@
 @media (max-width: 768px) {
   .dashboard-layout {
     grid-template-columns: 1fr;
+  }
+}
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(15, 23, 42, 0.45);
   }
 }

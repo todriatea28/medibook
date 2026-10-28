@@ -1,21 +1,22 @@
-import React from 'react';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import Header from '../Header/Header';
-import StatCard from '../StatCard/StatCard';
 import './Layout.css';
 
 export default function Layout() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div className="dashboard-layout">
-      <Sidebar />
+      <Sidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+
+      {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} aria-hidden="true" />}
+
       <div className="main-wrapper">
-        <Header />
+        <Header onMenuClick={() => setMenuOpen((v) => !v)} menuOpen={menuOpen} />
         <main className="main-content">
-          <section className="stats-grid">
-            <StatCard title="მთლიანი შემოსავალი" value="₾12,450" change="↑ 12% ამ თვეში" />
-            <StatCard title="აქტიური პაციენტები" value="1,240" change="↑ 8% ახალი" />
-            <StatCard title="დღიური ჯავშნები" value="36" change="განახლებულია დღეს" />
-          </section>
+          <Outlet />
         </main>
       </div>
     </div>
