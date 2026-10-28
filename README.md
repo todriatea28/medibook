@@ -1,4 +1,4 @@
-# MediBook — ციფრული სამედიცინო ჰაბი და პაციენტების მართვის პლატფორმა
+MediBook — ციფრული სამედიცინო ჰაბი და პაციენტების მართვის პლატფორმა
 
 **Live Demo:** [აქვე შეგიძლია ჩასვა შენი Vercel-ის ლინკი]  
 **კატეგორია:** სამედიცინო ჰაბი / პაციენტების მართვის სისტემა  
@@ -39,3 +39,8 @@ src/
 ├── services/    # ბაზასთან და სერვისებთან კომუნიკაცია
 ├── store/       # გლობალური Zustand სთეიթი
 └── types/       # TypeScript ტიპები და ინტერფეისები
+ლოკალურად გაშვების ინსტრუქციადააკლონირეთ რეპოზიტორია:Bashgit clone [https://github.com/todriatea28/medibook.git](https://github.com/todriatea28/medibook.git)
+cd medibook
+დააყენეთ პაკეტები:Bashnpm install
+გაუშვით დეველოპერული სერვერი:Bashnpm run dev
+(ბრაუზერში გახსენით: http://localhost:5173)[cite: 9]ხელმისაწვდომი სკრიპტებიnpm run dev — დეველოპერული სერვერის გაშვება   npm run build — საწარმოო (Production) ვერსიის აწყობა   npm run preview — აწყობილი ვერსიის ლოკალურად გაშვება   ავტორი
