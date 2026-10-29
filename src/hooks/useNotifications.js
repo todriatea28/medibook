@@ -7,7 +7,10 @@ export function useNotifications() {
   const [notifications, setNotifications] = useState([]);
 
   const load = useCallback(async () => {
-    if (!user) return setNotifications([]);
+    if (!user) {
+      setNotifications([]);
+      return;
+    }
     const { data } = await supabase
       .from('notifications')
       .select('id, text, is_read, created_at')
@@ -33,4 +36,13 @@ export function useNotifications() {
       supabase.removeChannel(channel);
     };
   }, [user, load]);
+
+  const markAsRead = useCallback(async (id) => {
+    setNotifications((list) => list.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
+    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+  }, []);
+
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+  return { notifications, unreadCount, markAsRead };
 }

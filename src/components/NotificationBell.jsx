@@ -3,7 +3,12 @@ import { Bell } from 'lucide-react';
 import { useNotifications } from '../hooks/useNotifications';
 
 const fmt = (iso) =>
-  new Date(iso).toLocaleString('ka-GE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  new Date(iso).toLocaleString('ka-GE', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
 export default function NotificationBell() {
   const { notifications, unreadCount, markAsRead } = useNotifications();
