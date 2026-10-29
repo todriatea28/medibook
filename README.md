@@ -65,6 +65,4 @@ npm run dev
 * **თეა თოდრია** — [GitHub პროფილი](https://www.google.com/search?q=https://github.com/todriatea28)
 
 
-ც ასპროცენტიანად მზად არის ჩასაბარებლად! 🎉
-
 ```
