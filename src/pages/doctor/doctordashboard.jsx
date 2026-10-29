@@ -7,6 +7,7 @@ import { supabase } from "../../supabaseClient";
 import Modal from "../../components/Modal/Modal";
 import ScheduleEditor from "../../components/ScheduleEditor";
 import AppointmentCard from "../../components/AppointmentCard";
+import NotificationBell from "../../components/NotificationBell";
 
 const FILTERS = [
   { key: "today", label: "დღეს" },
@@ -101,7 +102,7 @@ export default function DoctorDashboard() {
     try {
       // ვინახავთ როგორც ნოტებს/დანიშნულებას, ისე დიაგნოზს
       await appointmentService.saveNotes(editing.id, noteText.trim());
-      
+
       const { error: diagError } = await supabase
         .from("appointments")
         .update({ diagnosis: diagnosisText.trim() })
@@ -109,9 +110,9 @@ export default function DoctorDashboard() {
 
       if (diagError) throw diagError;
 
-      updateLocal(editing.id, { 
-        notes: noteText.trim(), 
-        diagnosis: diagnosisText.trim() 
+      updateLocal(editing.id, {
+        notes: noteText.trim(),
+        diagnosis: diagnosisText.trim(),
       });
       setEditing(null);
     } catch (err) {
@@ -128,10 +129,11 @@ export default function DoctorDashboard() {
           medihub · ექიმის სივრცე
         </h1>
         <div className="flex items-center gap-3">
-          <span className="hidden text-sm sm:inline text-stone-500">
+          <span className="hidden text-sm sm:inline text-slate-500">
             ექიმი:{" "}
-            <strong className="text-stone-900">{profile?.full_name}</strong>
+            <strong className="text-slate-900">{profile?.full_name}</strong>
           </span>
+          <NotificationBell />
           <button
             onClick={handleLogout}
             className={`${btn} text-rose-600 bg-rose-50 border-rose-200 hover:bg-rose-100`}
