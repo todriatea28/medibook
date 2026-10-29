@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import NotificationBell from "./NotificationBell"; // 1. იმპორტი
+import NotificationBell from "./NotificationBell";
 
 const PANEL_BY_ROLE = {
   admin: { to: "/admin", label: "ადმინ პანელი" },
@@ -26,11 +26,12 @@ export default function Navbar() {
 
   const linkClass = "transition hover:text-rose-900 font-medium";
   const ctaClass =
-    "px-5 py-2.5 text-white transition bg-rose-900 shadow-md shadow-rose-900/20 rounded-xl hover:bg-rose-800 font-semibold";
+    "px-5 py-2.5 text-white transition bg-rose-900 shadow-md shadow-rose-900/20 rounded-xl hover:bg-rose-800 font-semibold text-center";
 
   return (
     <header className="sticky top-0 z-50 border-b shadow-sm backdrop-blur-xl bg-white/80 border-stone-200/80">
       <div className="flex items-center justify-between h-20 px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+        {/* ლოგო */}
         <Link
           to="/"
           className="text-2xl font-black tracking-tight text-transparent bg-gradient-to-r from-rose-900 to-rose-700 bg-clip-text"
@@ -38,6 +39,7 @@ export default function Navbar() {
           medihub
         </Link>
 
+        {/* დესკტოპ მენიუ */}
         <nav
           aria-label="მთავარი ნავიგაცია"
           className="items-center hidden gap-6 text-sm font-semibold md:flex text-stone-700"
@@ -48,7 +50,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* 2. თუ მომხმარებელი შესულია, ვუჩვენებთ შეტყობინებების ზარს */}
+          {/* შეტყობინებების ზარი დესკტოპისთვის */}
           {user && <NotificationBell />}
 
           {user ? (
@@ -62,6 +64,7 @@ export default function Navbar() {
           )}
         </nav>
 
+        {/* მობილური ჰამბურგერ ღილაკი */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           aria-label="მენიუს გახსნა"
@@ -72,6 +75,7 @@ export default function Navbar() {
         </button>
       </div>
 
+      {/* მობილური ჩამოსაშლელი მენიუ */}
       {isOpen && (
         <nav
           aria-label="მობილური ნავიგაცია"
@@ -88,7 +92,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* მობილური ვერსიისთვისაც რომ გამოჩნდეს ზარი */}
+          {/* შეტყობინებები მობილურისთვის */}
           {user && (
             <div className="flex items-center justify-between py-2 pt-3 border-t border-stone-100">
               <span className="text-xs font-semibold text-stone-600">შეტყობინებები:</span>
