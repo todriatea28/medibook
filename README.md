@@ -57,8 +57,9 @@ npm run dev
 
 | როლი | ელფოსტა | პაროლი |
 | --- | --- | --- |
-| **ადმინისტრატორი / ექიმი** | admin@medibook.ge | admin123 |
-| **მომხმარებელი / პაციენტი** | patient@medibook.ge | user123 |
+| **ადმინისტრატორი /  | admin@medibook.ge | Admin& |
+| **მომხმარებელი / პაციენტი** | patient@medibook.ge | Patient& |
+ ექიმი    doctor@medibook.ge    Doctor&
 
 ## ხელმისაწვდომი სკრიპტები
 
