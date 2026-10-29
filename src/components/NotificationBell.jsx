@@ -1,40 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { useMediStore } from '../store/useMediStore'; // შენი სთეიტის იმპორტი
 
 export default function NotificationBell() {
-  const { user } = useAuth();
-  const [notifications, setNotifications] = useState([]);
+  const { notifications } = useMediStore(); // ვიღებთ შეტყობინებებს სთეიტიდან
   const [isOpen, setIsOpen] = useState(false);
+  const [readIds, setReadIds] = useState([]); // შენახული წაკითხული ID-ები
 
-  useEffect(() => {
-    if (!user) return;
-    fetchNotifications();
-  }, [user]);
-
-  const fetchNotifications = async () => {
-    const { data, error } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    if (!error) {
-      setNotifications(data || []);
+  const markAsRead = (id) => {
+    if (!readIds.includes(id)) {
+      setReadIds([...readIds, id]);
     }
   };
 
-  const markAsRead = async (id) => {
-    await supabase
-      .from('notifications')
-      .update({ is_read: true })
-      .eq('id', id);
-    
-    setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
-  };
-
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  // ვითვლით წაუკითხავებს (ყველა ის, რომელიც არ არის readIds სიაში)
+  const unreadCount = notifications.filter(n => !readIds.includes(n.id)).length;
 
   return (
     <div className="relative">
@@ -64,20 +43,23 @@ export default function NotificationBell() {
             {notifications.length === 0 ? (
               <p className="py-4 text-xs text-center text-stone-400">შეტყობინებები არ არის.</p>
             ) : (
-              notifications.map((item) => (
-                <div 
-                  key={item.id} 
-                  onClick={() => markAsRead(item.id)}
-                  className={`p-3 rounded-xl border text-xs cursor-pointer transition ${
-                    item.is_read 
-                      ? 'bg-stone-50 border-stone-200 text-stone-600' 
-                      : 'bg-rose-50/50 border-rose-200 text-stone-900 font-medium'
-                  }`}
-                >
-                  <p className="font-bold text-rose-900 mb-0.5">{item.title}</p>
-                  <p>{item.message}</p>
-                </div>
-              ))
+              notifications.map((item) => {
+                const isRead = readIds.includes(item.id);
+                return (
+                  <div 
+                    key={item.id} 
+                    onClick={() => markAsRead(item.id)}
+                    className={`p-3 rounded-xl border text-xs cursor-pointer transition ${
+                      isRead 
+                        ? 'bg-stone-50 border-stone-200 text-stone-600' 
+                        : 'bg-rose-50/50 border-rose-200 text-stone-900 font-medium'
+                    }`}
+                  >
+                    <p className="font-bold text-rose-900 mb-0.5">{item.text}</p>
+                    <p className="text-[10px] text-stone-400">{item.time}</p>
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
