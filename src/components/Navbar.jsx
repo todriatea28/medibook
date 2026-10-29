@@ -1,108 +1,44 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import NotificationBell from './NotificationBell';
 
-const PANEL_BY_ROLE = {
-  admin: { to: '/admin', label: 'ადმინ პანელი' },
-  doctor: { to: '/doctor', label: 'ჩემი პანელი' },
-  patient: { to: '/patient', label: 'ექიმები' },
-};
+export function useNotifications() {
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState([]);
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { user, role, signOut } = useAuth();
-  const navigate = useNavigate();
+  const load = useCallback(async () => {
+    if (!user) return setNotifications([]);
+    const { data } = await supabase
+      .from('notifications')
+      .select('id, text, is_read, created_at')
+      .order('created_at', { ascending: false })
+      .limit(30);
+    setNotifications(data ?? []);
+  }, [user]);
 
-  const links = [{ to: '/', label: 'მთავარი' }];
-  if (user && PANEL_BY_ROLE[role]) links.push(PANEL_BY_ROLE[role]);
-  if (!user) links.push({ to: '/register', label: 'რეგისტრაცია' });
+  useEffect(() => {
+    load();
+    if (!user) return;
 
-  const handleLogout = async () => {
-    setIsOpen(false);
-    await signOut();
-    navigate('/login');
-  };
+    const channel = supabase
+      .channel(`notif-${user.id}-${Math.random().toString(36).slice(2)}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+        (payload) => setNotifications((list) => [payload.new, ...list])
+      )
+      .subscribe();
 
-  const linkClass = 'transition hover:text-teal-600';
-  const ctaClass =
-    'px-4 py-2 text-white transition bg-teal-600 shadow-sm rounded-xl hover:bg-teal-500';
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, load]);
 
-  return (
-    <header className="sticky top-0 z-30 bg-white border-b shadow-sm border-slate-200">
-      <div className="flex items-center justify-between px-4 py-4 mx-auto max-w-7xl sm:px-6">
-        <Link to="/" className="text-2xl font-black tracking-tight text-teal-600">
-          MediBook
-        </Link>
+  const markAsRead = useCallback(async (id) => {
+    setNotifications((list) => list.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
+    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+  }, []);
 
-        <nav
-          aria-label="მთავარი ნავიგაცია"
-          className="items-center hidden gap-6 text-sm font-semibold md:flex text-slate-600"
-        >
-          {links.map((l) => (
-            <Link key={l.to} to={l.to} className={linkClass}>
-              {l.label}
-            </Link>
-          ))}
-          {user && <NotificationBell />}
-          {user ? (
-            <button onClick={handleLogout} className={ctaClass}>
-              გასვლა
-            </button>
-          ) : (
-            <Link to="/login" className={ctaClass}>
-              შესვლა
-            </Link>
-          )}
-        </nav>
-
-        <div className="flex items-center gap-2 md:hidden">
-          {user && <NotificationBell />}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="მენიუს გახსნა"
-            aria-expanded={isOpen}
-            className="p-2 transition rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200"
-          >
-            {isOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
-          </button>
-        </div>
-      </div>
-
-      {isOpen && (
-        <nav
-          aria-label="მობილური ნავიგაცია"
-          className="px-4 py-4 space-y-3 bg-white border-b shadow-lg md:hidden border-slate-200"
-        >
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              onClick={() => setIsOpen(false)}
-              className="block py-1 text-sm font-semibold text-slate-700 hover:text-teal-600"
-            >
-              {l.label}
-            </Link>
-          ))}
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="w-full py-2.5 text-sm font-semibold text-white bg-teal-600 rounded-xl"
-            >
-              გასვლა
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              onClick={() => setIsOpen(false)}
-              className="block w-full py-2.5 text-sm font-semibold text-center text-white bg-teal-600 rounded-xl"
-            >
-              შესვლა
-            </Link>
-          )}
-        </nav>
-      )}
-    </header>
-  );
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  return { notifications, unreadCount, markAsRead };
 }
