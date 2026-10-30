@@ -32,8 +32,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-30 bg-white border-b shadow-sm border-slate-200">
       <div className="flex items-center justify-between px-4 py-4 mx-auto max-w-7xl sm:px-6">
-        <Link to="/" className="text-2xl font-black tracking-tight text-teal-600">
-          MediBook
+        <Link to="/" className="text-2xl font-black tracking-tight bg-rose-600">
+          Medihub
         </Link>
 
         <nav
